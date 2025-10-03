@@ -1,0 +1,27 @@
+## Build results
+bin/
+obj/
+out/
+
+## User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## VS Code
+.vscode/
+
+## Rider
+.idea/
+
+## ASP.NET artifacts
+wwwroot/lib/
+
+## Others
+*.log
+*.db
+*.cache
+
+# IIS Express
+.vs/
