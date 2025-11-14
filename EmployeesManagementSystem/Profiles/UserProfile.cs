@@ -8,7 +8,18 @@ namespace EmployeesManagementSystem.Profiles
     {
         public UserProfile()
         {
-           
+            CreateMap<UserRequest, User>();
+            CreateMap<CreateUserRequest, User>();
+            CreateMap<User, UserResponce>();
+            CreateMap<UserResponce, User>();
+            CreateMap<OperationList, OperationListResponce>();
+            CreateMap<OperationListResponce, OperationList>();
+
+            CreateMap<OperationList, DocumentResponce>();
+            CreateMap<DocumentResponce, OperationList>();
+
+            CreateMap<Document, FileResponce>();
+            CreateMap<FileResponce, Document>();
         }
     }
 

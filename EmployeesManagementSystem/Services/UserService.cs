@@ -1,49 +1,68 @@
-﻿using EmployeesManagementSystem.DTOs;
+﻿using AutoMapper;
+using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
 using EmployeesManagementSystem.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagementSystem.Services
 {
     public class UserService
     {
         private readonly UserRepository _repository;
-        public UserService(UserRepository repository)
+        private readonly IMapper _mapper;
+
+        public UserService(UserRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
-        public async Task<bool> SendFileAsynce(SendFileRequest request)
-        {
-            var receiver = await _repository.GetByIdAsync(request.ReceiverId);
-            if (receiver == null)
-                return false;
 
-            byte[] fileData;
-            using (var ms = new MemoryStream())
+        public async Task<List<UserResponce>> GetAlL()
+        {
+            var user = await _repository.GetAll();
+            var responce = _mapper.Map<List<UserResponce>>(user);
+            return responce;
+        }
+
+        public async Task<UserResponce> GetById(Guid id)
+        {
+            var user = await _repository.GetById(id);
+            var responce = _mapper.Map<UserResponce>(user);
+            return responce;
+        }
+
+        public async Task<UserResponce> Create(CreateUserRequest createUser)
+        {
+
+            var existEmile = await _repository.GetByEmailAsync(createUser.Email);
+            if (existEmile is not null)
             {
-                await request.formFile.CopyToAsync(ms);
-                fileData = ms.ToArray();
+                throw new DbUpdateException($"User with email {createUser.Email} already exists.");
             }
 
-            var file = new Files
-            {
-                Id = Guid.NewGuid(),
-                Name = request.formFile.FileName,
-                Content = request.formFile.ContentType,
-                ReceiverId = request.ReceiverId,
-                Data = fileData,
-                CreatedBy = Guid.Parse("08ddfe9f-e22c-4056-8196-ae42978dfec2"),
-                CreatedAt = DateTime.UtcNow
-            };
-            await _repository.SaveFileAsync(file);
-            return true;
+            var user = new User();
+            var hashedPassword = new PasswordHasher<User>()
+                 .HashPassword(user, createUser.Password);
+            user.Name = createUser.Name;
+            user.Email = createUser.Email;
+            user.Password = hashedPassword;
+            var createdUser = await _repository.Add(user);
+            var responce = _mapper.Map<UserResponce>(createdUser);
+            return responce;
         }
-        public async Task<Files?> DownloadAsync(Guid id)
+        public async Task<UserResponce> Update(Guid id, UserRequest upDateUser)
         {
-            return await _repository.downloasFile(id);
+            var user = _mapper.Map<User>(upDateUser);
+            user.Id = id;
+            var updatedUser = await _repository.Update(user);
+            var responce = _mapper.Map<UserResponce>(updatedUser);
+            return responce;
+        }
+
+        public async Task Delete(Guid id)
+        {
+            await _repository.Delete(id);
         }
     }
 }
-

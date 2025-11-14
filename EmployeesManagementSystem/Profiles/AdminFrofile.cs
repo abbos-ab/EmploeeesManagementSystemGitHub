@@ -7,11 +7,11 @@ namespace EmployeesManagementSystem.Profiles
     {
         public AdminProfile()
         {
-            CreateMap<CreateAdminRequest, User>();
-            CreateMap<User, AdminResponce>();
-            CreateMap<CreateAdminRequest, AdminResponce>();
-            CreateMap<FileResponce, Files>();
-            CreateMap<Files, FileResponce>();            
+            CreateMap<CreateUserRequest, User>();
+            CreateMap<User, UserResponce>();
+            CreateMap<CreateUserRequest, UserResponce>();
+            CreateMap<DocumentResponce, Document>();
+            CreateMap<Document, DocumentResponce>();            
         }
     }
 }

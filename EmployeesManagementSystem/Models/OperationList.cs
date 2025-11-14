@@ -2,14 +2,15 @@
 {
     public class OperationList
     {
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
+        public Guid FileID { get; set; }
+        public Guid SenderId { get; set; }
+        public Guid ReceiverId { get; set; }
+        public string AcrionType { get; set; } = null!;
         public DateTime DateTime { get; set; }
 
-        public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
-
-        public Guid FileID { get; set; }
-        public Files File { get; set; } = null!;
-        public string ActionType { get; set; }
+        public Document File { get; set; } = null!;
+        public User UserSend { get; set; } = null!;
+        public User UserReceive { get; set; } = null!;
     }
 }

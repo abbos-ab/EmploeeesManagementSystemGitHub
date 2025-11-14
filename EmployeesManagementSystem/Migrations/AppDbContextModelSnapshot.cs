@@ -22,7 +22,22 @@ namespace EmployeesManagementSystem.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("EmployeesManagementSystem.Models.Files", b =>
+            modelBuilder.Entity("EmployeesManagementSystem.Models.Departament", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departaments");
+                });
+
+            modelBuilder.Entity("EmployeesManagementSystem.Models.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,12 +47,6 @@ namespace EmployeesManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("char(36)");
-
                     b.Property<byte[]>("Data")
                         .IsRequired()
                         .HasColumnType("longblob");
@@ -46,25 +55,18 @@ namespace EmployeesManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("ReceiverId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("File");
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("EmployeesManagementSystem.Models.OperationList", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("ActionType")
+                    b.Property<string>("AcrionType")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -74,14 +76,19 @@ namespace EmployeesManagementSystem.Migrations
                     b.Property<Guid>("FileID")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("ReceiverId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("id");
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("FileID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Operations");
                 });
@@ -99,6 +106,23 @@ namespace EmployeesManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Name = "SuperAdmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("EmployeesManagementSystem.Models.User", b =>
@@ -107,88 +131,123 @@ namespace EmployeesManagementSystem.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("EmployeesManagementSystem.Models.Files", b =>
+            modelBuilder.Entity("EmployeesManagementSystem.Models.UserDeportmentRole", b =>
                 {
-                    b.HasOne("EmployeesManagementSystem.Models.User", "User")
-                        .WithMany("Files")
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
 
-                    b.HasOne("EmployeesManagementSystem.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Property<Guid>("IdDeportment")
+                        .HasColumnType("char(36)");
 
-                    b.Navigation("Receiver");
+                    b.Property<Guid>("IdRole")
+                        .HasColumnType("char(36)");
 
-                    b.Navigation("User");
+                    b.Property<Guid>("IdUser")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdDeportment");
+
+                    b.HasIndex("IdRole");
+
+                    b.HasIndex("IdUser");
+
+                    b.ToTable("UserDeportmentRoles");
                 });
 
             modelBuilder.Entity("EmployeesManagementSystem.Models.OperationList", b =>
                 {
-                    b.HasOne("EmployeesManagementSystem.Models.Files", "File")
+                    b.HasOne("EmployeesManagementSystem.Models.Document", "File")
                         .WithMany("Operations")
                         .HasForeignKey("FileID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EmployeesManagementSystem.Models.User", "User")
-                        .WithMany("operationLists")
-                        .HasForeignKey("UserId")
+                    b.HasOne("EmployeesManagementSystem.Models.User", "UserReceive")
+                        .WithMany("ReceiveOperations")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployeesManagementSystem.Models.User", "UserSend")
+                        .WithMany("SendOperations")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("File");
 
-                    b.Navigation("User");
+                    b.Navigation("UserReceive");
+
+                    b.Navigation("UserSend");
                 });
 
-            modelBuilder.Entity("EmployeesManagementSystem.Models.User", b =>
+            modelBuilder.Entity("EmployeesManagementSystem.Models.UserDeportmentRole", b =>
                 {
-                    b.HasOne("EmployeesManagementSystem.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("EmployeesManagementSystem.Models.Departament", "Departament")
+                        .WithMany("UserDeportmentRoles")
+                        .HasForeignKey("IdDeportment")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EmployeesManagementSystem.Models.Role", "Role")
+                        .WithMany("UserDeportmentRoles")
+                        .HasForeignKey("IdRole")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployeesManagementSystem.Models.User", "User")
+                        .WithMany("UserDeportmentRoles")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Departament");
+
                     b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EmployeesManagementSystem.Models.Files", b =>
+            modelBuilder.Entity("EmployeesManagementSystem.Models.Departament", b =>
+                {
+                    b.Navigation("UserDeportmentRoles");
+                });
+
+            modelBuilder.Entity("EmployeesManagementSystem.Models.Document", b =>
                 {
                     b.Navigation("Operations");
                 });
 
             modelBuilder.Entity("EmployeesManagementSystem.Models.Role", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("UserDeportmentRoles");
                 });
 
             modelBuilder.Entity("EmployeesManagementSystem.Models.User", b =>
                 {
-                    b.Navigation("Files");
+                    b.Navigation("ReceiveOperations");
 
-                    b.Navigation("operationLists");
+                    b.Navigation("SendOperations");
+
+                    b.Navigation("UserDeportmentRoles");
                 });
 #pragma warning restore 612, 618
         }

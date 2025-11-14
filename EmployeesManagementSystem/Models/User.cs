@@ -4,13 +4,11 @@
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
-        public string Password { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
 
-        public Role Role { get; set; } = null!;
-        public Guid RoleId {  get; set; }
-
-        public ICollection<Files> Files { get; set; } = new List<Files>();
-
-        public ICollection<OperationList> operationLists { get; set; } = new List<OperationList>();
+        public ICollection<UserDeportmentRole> UserDeportmentRoles { get; set; } = new List<UserDeportmentRole>();
+        public ICollection<OperationList> SendOperations { get; set; } = new List<OperationList>();
+        public ICollection<OperationList> ReceiveOperations { get; set; } = new List<OperationList>();
     }
 }

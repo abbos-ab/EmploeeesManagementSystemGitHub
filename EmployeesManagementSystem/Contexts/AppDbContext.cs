@@ -4,11 +4,12 @@ namespace EmployeesManagementSystem.Contexts
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<Files> File { get; set; }
+        public DbSet<Departament> Departaments { get; set; }
+        public DbSet<Document> Documents { get; set; }
         public DbSet<OperationList> Operations { get; set; }
-        public object Files { get; internal set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserDeportmentRole> UserDeportmentRoles { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -18,51 +19,72 @@ namespace EmployeesManagementSystem.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Role)
-                .WithMany(r => r.Users)
-                .HasForeignKey(u => u.RoleId);
-            modelBuilder.Entity<User>()
-                .Property(u => u.Id)
-                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.Id)
+                .HasColumnType("char(36)");
+            modelBuilder.Entity<Departament>()
+                .Property(d => d.Id)
+                .HasColumnType("char(36)");
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Name = "SuperAdmin" },
+                new Role { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Name = "Admin" },
+                new Role { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Name = "User" }
+            );
 
 
-
-            modelBuilder.Entity<Files>()
+            modelBuilder.Entity<UserDeportmentRole>()
                 .HasOne(u => u.User)
-                .WithMany(r => r.Files)
-                .HasForeignKey(f => f.CreatedBy);
-            modelBuilder.Entity<Files>()
+                .WithMany(r => r.UserDeportmentRoles)
+                .HasForeignKey(ur => ur.IdUser);
+            modelBuilder.Entity<UserDeportmentRole>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+
+
+            modelBuilder.Entity<UserDeportmentRole>()
+                .HasOne(r => r.Role)
+                .WithMany(ur => ur.UserDeportmentRoles)
+                .HasForeignKey(ur => ur.IdRole);
+            modelBuilder.Entity<UserDeportmentRole>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+
+
+            modelBuilder.Entity<UserDeportmentRole>()
+                .HasOne(d => d.Departament)
+                .WithMany(ur => ur.UserDeportmentRoles)
+                .HasForeignKey(ur => ur.IdDeportment);
+            modelBuilder.Entity<UserDeportmentRole>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+
+
+            modelBuilder.Entity<OperationList>()
+                .HasOne(u => u.File)
+                .WithMany(o => o.Operations)
+                .HasForeignKey(ur => ur.FileID);
+            modelBuilder.Entity<OperationList>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+
+
+            modelBuilder.Entity<OperationList>()
+                .HasOne(u => u.UserSend)
+                .WithMany(o => o.SendOperations)
+                .HasForeignKey(ur => ur.SenderId);
+            modelBuilder.Entity<OperationList>()
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
 
 
 
             modelBuilder.Entity<OperationList>()
-                 .HasOne(o => o.User)
-                 .WithMany(u => u.operationLists)
-                 .HasForeignKey(o => o.UserId);
-            modelBuilder.Entity<User>()
-                 .Property(u => u.Id)
-                 .ValueGeneratedOnAdd();
-
-
+                .HasOne(u => u.UserReceive)
+                .WithMany(o => o.ReceiveOperations)
+                .HasForeignKey(ur => ur.ReceiverId);
             modelBuilder.Entity<OperationList>()
-                .HasOne(o => o.File)
-                .WithMany(f => f.Operations)
-                .HasForeignKey(o => o.FileID);
-            modelBuilder.Entity<User>()
-                .Property(u => u.Id)
-                .ValueGeneratedOnAdd();
-
-
-
-            modelBuilder.Entity<Files>()
-                .HasOne(f => f.Receiver)
-                .WithMany()
-                .HasForeignKey(f => f.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Files>()
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
         }

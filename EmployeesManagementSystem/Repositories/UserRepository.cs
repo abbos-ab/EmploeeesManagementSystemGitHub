@@ -1,43 +1,53 @@
 ﻿using EmployeesManagementSystem.Contexts;
-using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace EmployeesManagementSystem.Repositories
 {
     public class UserRepository
     {
         private readonly AppDbContext _context;
+
         public UserRepository(AppDbContext context)
         {
             _context = context;
         }
 
-
-        //public async Task<UserFile> GetUserFileAsync(Guid id)
-        //{
-        //    return await _context.UserFiles.FindAsync(id);
-        //}
-        public async Task<User?> GetByIdAsync(Guid id)
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task SaveFileAsync(Files file)
+        public Task<List<User>> GetAll()
         {
-            _context.File.Add(file);
+            return _context.Users.ToListAsync();
+        }
+
+        public Task<User> GetById(Guid id)
+        {
+            return _context.Users
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<User> Add(User user)
+        {
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return user;
         }
 
-        public async Task<Files> downloasFile(Guid id)
+        public async Task<User> Update(User user)
         {
-            return await _context.File.FindAsync(id);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
-
-
-
+        public async Task Delete(Guid id)
+        {
+            await _context.Users
+                .Where(c => c.Id == id)
+                .ExecuteDeleteAsync();
+        }
     }
 }
