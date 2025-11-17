@@ -10,5 +10,4 @@ public class UserDepartmentRole
     public User User { get; set; }
     public Department Department { get; set; }
     public Role Role { get; set; }
-    public ICollection<User> Users { get; set; } = new List<User>();
 }

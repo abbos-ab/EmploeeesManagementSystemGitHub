@@ -23,7 +23,7 @@ public class AssignmentsRepository
         return result;
     }
 
-    public async Task<UserDepartmentRole?> GetForCheck(Guid userId, Guid departmentId, Guid roleId)
+    public async Task<UserDepartmentRole> GetForCheck(Guid userId, Guid departmentId, Guid roleId)
     {
         var result = await _dbContext.UserDepartmentRoles
             .FirstOrDefaultAsync(udr => udr.UserId == userId
@@ -48,7 +48,7 @@ public class AssignmentsRepository
             .ExecuteDeleteAsync();
     }
 
-    public async Task<List<UserDepartmentRole?>> GetByUserIdAsync(Guid userId)
+    public async Task<List<UserDepartmentRole>> GetByUserIdAsync(Guid userId)
     {
         return await _dbContext.UserDepartmentRoles
             .Include(udr => udr.Department)

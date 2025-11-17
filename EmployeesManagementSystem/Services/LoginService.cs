@@ -10,9 +10,9 @@ using System.Text;
 
 namespace EmployeesManagementSystem.Services;
 
-public class LoginService(AppDbContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor)
+public class LoginService(AppDbContext context, IConfiguration configuration)
 {
-    public async Task<string?> LoginAsync(UserLogin request)
+    public async Task<string> LoginAsync(UserLogin request)
     {
         var user = await context.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -20,7 +20,7 @@ public class LoginService(AppDbContext context, IConfiguration configuration, IH
         if (user is null)
             return null;
 
-        if (new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, request.Password)
+        if (new PasswordHasher<User>().VerifyHashedPassword(user, user.Password ?? string.Empty, request.Password)
             == PasswordVerificationResult.Failed)
         {
             return null;

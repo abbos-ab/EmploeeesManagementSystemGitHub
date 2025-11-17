@@ -55,12 +55,7 @@ public class AssignmentsService
     {
         var records = await _repository.GetByUserIdAsync(userId);
 
-        var response = records.Select(r => new AssignmentsResponse
-        {
-            UserId = r.UserId,
-            DepartmentId = r.DepartmentId,
-            RoleId = r.RoleId
-        }).ToList();
+        var response = _mapper.Map<List<AssignmentsResponse>>(records);
 
         return response;
     }

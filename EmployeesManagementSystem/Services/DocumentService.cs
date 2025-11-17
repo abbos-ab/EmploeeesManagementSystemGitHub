@@ -100,7 +100,6 @@ public class DocumentService
     public async Task<bool> Send(Guid id, Guid receiverUserId)
     {
         var senderId = _currentUserService.GetUserIdFromToken();
-        var result = false;
         var operation = new OperationList
         {
             Id = Guid.NewGuid(),
@@ -113,13 +112,13 @@ public class DocumentService
         if (receiverUserId != senderId)
         {
             await _operationRepository.SaveOperation(operation);
-            return result = true;
+            return true;
         }
 
-        return result;
+        return false;
     }
 
-    public async Task<Document?> Download(Guid id)
+    public async Task<Document> Download(Guid id)
     {
         var receiverId = _currentUserService.GetUserIdFromToken();
         var sender = _operationRepository.GetSenderId(id);
@@ -148,15 +147,17 @@ public class DocumentService
     public async Task<Document> StampFile(Guid fileId)
     {
         var receiverId = _currentUserService.GetUserIdFromToken();
-        var sender = _operationRepository.GetSenderId(fileId);
-        var senderId = await sender;
+        var senderId = await _operationRepository.GetSenderId(fileId);
         var result = await _documentRepository.DownloadById(fileId, receiverId);
+        
         if (result == null)
-            return null;
+            throw new KeyNotFoundException("Document not found.");
+        
         if (result.Data == null || result.Data.Length == 0)
-            return null;
+            throw new InvalidOperationException("Document data is empty.");
+        
         if (string.IsNullOrEmpty(result.Content))
-            return null;
+            throw new InvalidOperationException("Document content type is missing.");
         result.Content = Convert.ToBase64String(result.Data);
 
         var fileExtension = Path.GetExtension(result.Name).ToLower();

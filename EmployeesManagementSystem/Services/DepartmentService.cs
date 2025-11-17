@@ -46,8 +46,6 @@ public class DepartmentService
     public async Task<DepartmentResponse> Update(Guid id, string name)
     {
         var department = await _repository.GetById(id);
-        if (department == null)
-            return null;
         department.Name = name;
         var updatedDepartment = await _repository.Update(department);
         var result = _mapper.Map<DepartmentResponse>(updatedDepartment);

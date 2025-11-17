@@ -6,9 +6,9 @@ public class OperationList
     public Guid FileId { get; set; }
     public Guid SenderId { get; set; }
     public Guid ReceiverId { get; set; }
-    public string ActionType { get; set; } = null!;
+    public string ActionType { get; set; }
     public DateTime DateTime { get; set; }
-    public Document File { get; set; } = null!;
-    public User Sender { get; set; } = null!;
-    public User Receiver { get; set; } = null!;
+    public Document File { get; set; }
+    public User Sender { get; set; }
+    public User Receiver { get; set; }
 }

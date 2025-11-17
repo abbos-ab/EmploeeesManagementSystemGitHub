@@ -13,7 +13,7 @@ public class UserRepository
         _context = context;
     }
 
-    public async Task<User?> GetByEmailAsync(string email)
+    public async Task<User> GetByEmailAsync(string email)
     {
         return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
@@ -23,10 +23,15 @@ public class UserRepository
         return _context.Users.ToListAsync();
     }
 
-    public Task<User> GetById(Guid id)
+    public async Task<User> GetById(Guid id)
     {
-        return _context.Users
+        var user = await _context.Users
             .FirstOrDefaultAsync(c => c.Id == id);
+        
+        if (user == null)
+            throw new KeyNotFoundException($"User with ID {id} not found.");
+        
+        return user;
     }
 
     public async Task<User> Add(User user)

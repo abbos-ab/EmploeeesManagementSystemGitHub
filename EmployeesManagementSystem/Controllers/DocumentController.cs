@@ -65,7 +65,22 @@ public class DocumentController : BaseController
     [HttpGet]
     public async Task<IActionResult> DownloadStampedPdf(Guid id)
     {
-        await _documentService.StampFile(id);
-        return Ok("File successfully stamped and sent");
+        try
+        {
+            await _documentService.StampFile(id);
+            return Ok("File successfully stamped and sent");
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (NotSupportedException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

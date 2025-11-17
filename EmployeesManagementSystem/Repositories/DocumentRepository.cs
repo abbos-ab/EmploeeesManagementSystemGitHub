@@ -45,12 +45,12 @@ public class DocumentRepository
             throw new ArgumentException("Document data cannot be null or empty.");
 
         doc.Content = "Stamped PDF";
-        _context.Documents.AddAsync(doc);
+        await _context.Documents.AddAsync(doc);
         await _context.SaveChangesAsync();
     }
 
 
-    public async Task<Document?> Download(Guid id, Guid receiverId)
+    public async Task<Document> Download(Guid id, Guid receiverId)
     {
         if (await _context.Operations.AnyAsync(s =>
                 s.FileId == id && s.ReceiverId == receiverId || s.FileId == id && s.SenderId == receiverId))

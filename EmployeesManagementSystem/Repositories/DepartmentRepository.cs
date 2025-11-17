@@ -20,8 +20,13 @@ public class DepartmentRepository
 
     public async Task<Department> GetById(Guid id)
     {
-        return await _context.Departments
+        var department = await _context.Departments
             .FirstOrDefaultAsync(c => c.Id == id);
+        
+        if (department == null)
+            throw new KeyNotFoundException($"Department with ID {id} not found.");
+        
+        return department;
     }
 
     public async Task<Department> Add(Department department)
