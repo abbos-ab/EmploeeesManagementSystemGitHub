@@ -33,7 +33,7 @@ public class UserController : BaseController
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UserRequest updateUser)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserRequest updateUser)
     {
         var updatedUser = await _service.Update(id, updateUser);
         return Ok(updatedUser);

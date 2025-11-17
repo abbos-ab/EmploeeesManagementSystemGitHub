@@ -14,7 +14,7 @@ public class RoleController : BaseController
     }
 
     [HttpGet]
-    public Task<List<RoleDto>> GetAll()
+    public Task<List<RoleResponse>> GetAll()
     {
         return _service.GetAll();
     }

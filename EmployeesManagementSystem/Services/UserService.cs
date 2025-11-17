@@ -51,7 +51,7 @@ public class UserService
         return response;
     }
 
-    public async Task<UserResponse> Update(Guid id, UserRequest updateUser)
+    public async Task<UserResponse> Update(Guid id, UpdateUserRequest updateUser)
     {
         var user = _mapper.Map<User>(updateUser);
         user.Id = id;

@@ -8,8 +8,7 @@ public class RoleProfile : Profile
 {
     public RoleProfile()
     {
-        CreateMap<Role, RoleDto>();
-
-        CreateMap<RoleDto, Role>();
+        // Role mappings
+        CreateMap<Role, RoleResponse>();
     }
 }

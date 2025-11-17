@@ -16,13 +16,13 @@ public class RoleRepository
         _context = context;
     }
 
-    public async Task<List<RoleDto>> GetAssignableRoles()
+    public async Task<List<RoleResponse>> GetAssignableRoles()
     {
         var roles = await _context.Roles
             .Where(r => r.Name != "SuperAdmin")
             .ToListAsync();
 
-        var result = _mapper.Map<List<RoleDto>>(roles);
+        var result = _mapper.Map<List<RoleResponse>>(roles);
         return result;
     }
 }

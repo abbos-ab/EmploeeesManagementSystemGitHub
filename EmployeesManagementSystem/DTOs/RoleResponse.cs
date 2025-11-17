@@ -1,6 +1,6 @@
 ﻿namespace EmployeesManagementSystem.DTOs;
 
-public class RoleDto
+public class RoleResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
