@@ -4,27 +4,29 @@ using EmployeesManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<AssignmentsService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<DocumentService>();
-builder.Services.AddScoped<DepartmentService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<CurrentUserService>();
-builder.Services.AddScoped<PdfWatermarkService>();
+builder.Services.AddScoped<IAssignmentsService, AssignmentsService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IPdfWatermarkService, PdfWatermarkService>();
 
-builder.Services.AddScoped<AssignmentsRepository>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<DocumentRepository>();
-builder.Services.AddScoped<DepartmentRepository>();
-builder.Services.AddScoped<RoleRepository>();
-builder.Services.AddScoped<OperationRepository>();
+builder.Services.AddScoped<IAssignmentsRepository, AssignmentsRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IOperationRepository, OperationRepository>();
 
 builder.Services.AddScoped<AppDbContext>();
 

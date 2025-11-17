@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.DTOs;
+using EmployeesManagementSystem.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagementSystem.Repositories;
 
-public class RoleRepository
+public class RoleRepository : IRoleRepository
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;

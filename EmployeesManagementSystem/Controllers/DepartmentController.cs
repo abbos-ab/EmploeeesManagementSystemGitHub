@@ -1,13 +1,13 @@
-﻿using EmployeesManagementSystem.Services;
+﻿using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
 public class DepartmentController : BaseController
 {
-    private readonly DepartmentService _service;
+    private readonly IDepartmentService _service;
 
-    public DepartmentController(DepartmentService service)
+    public DepartmentController(IDepartmentService service)
     {
         _service = service;
     }

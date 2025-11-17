@@ -1,10 +1,11 @@
 ﻿using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.Models;
+using EmployeesManagementSystem.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagementSystem.Repositories;
 
-public class DocumentRepository
+public class DocumentRepository : IDocumentRepository
 {
     private readonly AppDbContext _context;
 

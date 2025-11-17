@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 using Org.BouncyCastle.Security;
 
 namespace EmployeesManagementSystem.Services;
 
-public class AssignmentsService
+public class AssignmentsService : IAssignmentsService
 {
-    private readonly AssignmentsRepository _repository;
+    private readonly IAssignmentsRepository _repository;
     private readonly IMapper _mapper;
 
-    public AssignmentsService(AssignmentsRepository repository, IMapper mapper)
+    public AssignmentsService(IAssignmentsRepository repository, IMapper mapper)
     {
         _mapper = mapper;
         _repository = repository;

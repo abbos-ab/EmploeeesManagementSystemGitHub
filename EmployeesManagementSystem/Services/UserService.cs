@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagementSystem.Services;
 
-public class UserService
+public class UserService : IUserService
 {
-    private readonly UserRepository _repository;
+    private readonly IUserRepository _repository;
     private readonly IMapper _mapper;
 
-    public UserService(UserRepository repository, IMapper mapper)
+    public UserService(IUserRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

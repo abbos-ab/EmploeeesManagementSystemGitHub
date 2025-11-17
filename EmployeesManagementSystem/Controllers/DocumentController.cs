@@ -1,14 +1,14 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
 public class DocumentController : BaseController
 {
-    private readonly DocumentService _documentService;
+    private readonly IDocumentService _documentService;
 
-    public DocumentController(DocumentService documentService)
+    public DocumentController(IDocumentService documentService)
     {
         _documentService = documentService;
     }

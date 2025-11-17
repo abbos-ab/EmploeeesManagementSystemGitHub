@@ -2,11 +2,12 @@
 using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.DTOs;
 using AutoMapper;
+using EmployeesManagementSystem.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagementSystem.Repositories;
 
-public class AssignmentsRepository
+public class AssignmentsRepository : IAssignmentsRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly IMapper _mapper;

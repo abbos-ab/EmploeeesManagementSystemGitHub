@@ -1,8 +1,11 @@
-﻿using PdfSharpCore.Pdf;
+﻿using EmployeesManagementSystem.Services.Interfaces;
+using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
 using PdfSharpCore.Drawing;
 
-public class PdfWatermarkService
+namespace EmployeesManagementSystem.Services;
+
+public class PdfWatermarkService : IPdfWatermarkService
 {
     public byte[] AddStampToLastPage(byte[] pdfBytes, string watermarkText)
     {

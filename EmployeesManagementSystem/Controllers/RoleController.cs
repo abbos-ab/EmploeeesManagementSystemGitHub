@@ -1,14 +1,14 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
 public class RoleController : BaseController
 {
-    private readonly RoleService _service;
+    private readonly IRoleService _service;
 
-    public RoleController(RoleService service)
+    public RoleController(IRoleService service)
     {
         _service = service;
     }

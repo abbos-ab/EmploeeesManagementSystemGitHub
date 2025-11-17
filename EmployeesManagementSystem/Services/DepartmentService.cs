@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 
 namespace EmployeesManagementSystem.Services;
 
-public class DepartmentService
+public class DepartmentService : IDepartmentService
 {
-    private readonly DepartmentRepository _repository;
+    private readonly IDepartmentRepository _repository;
     private readonly IMapper _mapper;
 
-    public DepartmentService(DepartmentRepository repository, IMapper mapper)
+    public DepartmentService(IDepartmentRepository repository, IMapper mapper)
     {
         _mapper = mapper;
         _repository = repository;

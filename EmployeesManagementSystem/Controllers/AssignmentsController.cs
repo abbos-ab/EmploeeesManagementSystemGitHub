@@ -1,14 +1,14 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
 public class AssignmentsController : BaseController
 {
-    private readonly AssignmentsService _service;
+    private readonly IAssignmentsService _service;
 
-    public AssignmentsController(AssignmentsService service)
+    public AssignmentsController(IAssignmentsService service)
     {
         _service = service;
     }

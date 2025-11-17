@@ -1,24 +1,25 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 
 namespace EmployeesManagementSystem.Services;
 
-public class DocumentService
+public class DocumentService : IDocumentService
 {
-    private readonly CurrentUserService _currentUserService;
-    private readonly DocumentRepository _documentRepository;
-    private readonly OperationRepository _operationRepository;
-    private readonly PdfWatermarkService _watermarkService;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IDocumentRepository _documentRepository;
+    private readonly IOperationRepository _operationRepository;
+    private readonly IPdfWatermarkService _watermarkService;
     private readonly IMapper _mapper;
 
     public DocumentService(
-        DocumentRepository repository,
+        IDocumentRepository repository,
         IMapper mapper,
-        OperationRepository operationRepository,
-        PdfWatermarkService pdfWatermarkService,
-        CurrentUserService currentUserService)
+        IOperationRepository operationRepository,
+        IPdfWatermarkService pdfWatermarkService,
+        ICurrentUserService currentUserService)
     {
         _mapper = mapper;
         _documentRepository = repository;
@@ -149,13 +150,13 @@ public class DocumentService
         var receiverId = _currentUserService.GetUserIdFromToken();
         var senderId = await _operationRepository.GetSenderId(fileId);
         var result = await _documentRepository.DownloadById(fileId, receiverId);
-        
+
         if (result == null)
             throw new KeyNotFoundException("Document not found.");
-        
+
         if (result.Data == null || result.Data.Length == 0)
             throw new InvalidOperationException("Document data is empty.");
-        
+
         if (string.IsNullOrEmpty(result.Content))
             throw new InvalidOperationException("Document content type is missing.");
         result.Content = Convert.ToBase64String(result.Data);

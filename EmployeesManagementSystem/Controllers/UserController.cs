@@ -1,14 +1,14 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
 public class UserController : BaseController
 {
-    private readonly UserService _service;
+    private readonly IUserService _service;
 
-    public UserController(UserService service)
+    public UserController(IUserService service)
     {
         _service = service;
     }

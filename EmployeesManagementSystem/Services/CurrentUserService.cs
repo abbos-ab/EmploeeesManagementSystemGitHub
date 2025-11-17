@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
+using EmployeesManagementSystem.Services.Interfaces;
 
 namespace EmployeesManagementSystem.Services;
 
-public class CurrentUserService(IHttpContextAccessor contextAccessor)
+public class CurrentUserService(IHttpContextAccessor contextAccessor) : ICurrentUserService
 {
     public Guid GetUserIdFromToken()
     {

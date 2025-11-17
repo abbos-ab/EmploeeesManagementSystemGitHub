@@ -7,10 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EmployeesManagementSystem.Services.Interfaces;
 
 namespace EmployeesManagementSystem.Services;
 
-public class LoginService(AppDbContext context, IConfiguration configuration)
+public class LoginService(AppDbContext context, IConfiguration configuration) : ILoginService
 {
     public async Task<string> LoginAsync(UserLogin request)
     {

@@ -1,13 +1,14 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 
 namespace EmployeesManagementSystem.Services;
 
-public class RoleService
+public class RoleService : IRoleService
 {
-    private readonly RoleRepository _repository;
+    private readonly IRoleRepository _repository;
 
-    public RoleService(RoleRepository repository)
+    public RoleService(IRoleRepository repository)
     {
         _repository = repository;
     }

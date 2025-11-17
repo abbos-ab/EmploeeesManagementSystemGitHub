@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeesManagementSystem.Controllers;
 
-public class AuthController(LoginService service) : BaseController
+public class AuthController(ILoginService service) : BaseController
 {
     [AllowAnonymous]
     [HttpPost]
