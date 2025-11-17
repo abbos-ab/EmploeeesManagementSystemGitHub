@@ -1,47 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.Models;
-namespace EmployeesManagementSystem.Repositories
+
+namespace EmployeesManagementSystem.Repositories;
+
+public class DepartmentRepository
 {
-    public class DepartmentRepository
+    private readonly AppDbContext _context;
+
+    public DepartmentRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
-        public DepartmentRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        _context = context;
+    }
 
-        public async Task<List<Departament>> GetAll()
-        {
-            return await _context.Departaments.ToListAsync();
-        }
+    public async Task<List<Department>> GetAll()
+    {
+        return await _context.Departments.ToListAsync();
+    }
 
-        public async Task<Departament> GetById(Guid id)
-        {
-            return await _context.Departaments
-                .FirstOrDefaultAsync(c => c.Id == id);
-        }
+    public async Task<Department> GetById(Guid id)
+    {
+        return await _context.Departments
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
 
-        public async Task<Departament> Add(Departament department)
-        {
-            _context.Departaments.Add(department);
-            await _context.SaveChangesAsync();
-            return department;
-        }
+    public async Task<Department> Add(Department department)
+    {
+        _context.Departments.Add(department);
+        await _context.SaveChangesAsync();
+        return department;
+    }
 
 
-        public async Task<Departament> Update(Departament department)
-        {
-            _context.Departaments.Update(department);
-            await _context.SaveChangesAsync();
-            return department;
-        }
+    public async Task<Department> Update(Department department)
+    {
+        _context.Departments.Update(department);
+        await _context.SaveChangesAsync();
+        return department;
+    }
 
-        public async Task Delete(Departament department)
-        {
-            _context.Departaments.Remove(department);
-            await _context.SaveChangesAsync();
-        }
-
+    public async Task Delete(Department department)
+    {
+        _context.Departments.Remove(department);
+        await _context.SaveChangesAsync();
     }
 }

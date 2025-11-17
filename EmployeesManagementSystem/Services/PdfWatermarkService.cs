@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using PdfSharpCore.Pdf;
+﻿using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
 using PdfSharpCore.Drawing;
 
@@ -27,8 +25,8 @@ public class PdfWatermarkService
         var page = document.Pages[document.Pages.Count - 1];
         using var gfx = XGraphics.FromPdfPage(page);
 
-        double centerX = page.Width - 150;
-        double centerY = page.Height - 150;
+        var centerX = page.Width - 150;
+        var centerY = page.Height - 150;
         double radius = 80;
 
         var pen = new XPen(XColor.FromArgb(180, 200, 0, 0), 4);
@@ -48,19 +46,20 @@ public class PdfWatermarkService
         return output.ToArray();
     }
 
-    private void DrawCircularText(XGraphics gfx, string text, double centerX, double centerY, double radius, double fontSize)
+    private void DrawCircularText(XGraphics gfx, string text, double centerX, double centerY, double radius,
+        double fontSize)
     {
         var font = new XFont("DejaVu Sans", fontSize, XFontStyle.Bold);
         var chars = text.ToCharArray();
-        double angleStep = 360.0 / chars.Length;
+        var angleStep = 360.0 / chars.Length;
         double startAngle = -90;
 
-        for (int i = 0; i < chars.Length; i++)
+        for (var i = 0; i < chars.Length; i++)
         {
-            double angle = startAngle + i * angleStep;
-            double rad = angle * Math.PI / 180.0;
-            double x = centerX + radius * Math.Cos(rad);
-            double y = centerY + radius * Math.Sin(rad);
+            var angle = startAngle + i * angleStep;
+            var rad = angle * Math.PI / 180.0;
+            var x = centerX + radius * Math.Cos(rad);
+            var y = centerY + radius * Math.Sin(rad);
             gfx.Save();
             gfx.TranslateTransform(x, y);
             gfx.RotateTransform(angle + 90);

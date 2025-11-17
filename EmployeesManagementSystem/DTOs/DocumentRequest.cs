@@ -1,7 +1,6 @@
-﻿namespace EmployeesManagementSystem.DTOs
+﻿namespace EmployeesManagementSystem.DTOs;
+
+public class DocumentRequest
 {
-    public class DocumentRequest
-    {
-        public IFormFile formFile { get; set; }
-    }
+    public IFormFile FormFile { get; set; }
 }

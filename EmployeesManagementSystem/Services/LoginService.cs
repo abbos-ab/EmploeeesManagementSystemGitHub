@@ -8,52 +8,49 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace EmployeesManagementSystem.Services
+namespace EmployeesManagementSystem.Services;
+
+public class LoginService(AppDbContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor)
 {
-    public class LoginService(AppDbContext _context, IConfiguration configuration, IHttpContextAccessor _contextAccessor)
+    public async Task<string?> LoginAsync(UserLogin request)
     {
-        public async Task<string?> LoginAsync(Userlog request)
+        var user = await context.Users
+            .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if (user is null)
+            return null;
+
+        if (new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, request.Password)
+            == PasswordVerificationResult.Failed)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            if (user is null)
-                return null;
-
-            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, request.Password)
-                ==PasswordVerificationResult.Failed)
-            {
-                return null;
-            }
-
-            string token = CreateToken(user);
-
-            return token;
-
+            return null;
         }
 
-        private string CreateToken(User user)
+        var token = CreateToken(user);
+
+        return token;
+    }
+
+    private string CreateToken(User user)
+    {
+        var claims = new List<Claim>
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
+            new(ClaimTypes.Name, user.Name),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString())
+        };
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: configuration.GetValue<string>("AppSettings:Audience"),
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: configuration.GetValue<string>("AppSettings:Issuer"),
+            audience: configuration.GetValue<string>("AppSettings:Audience"),
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(1),
+            signingCredentials: creds
+        );
 
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: creds
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-        }
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 }

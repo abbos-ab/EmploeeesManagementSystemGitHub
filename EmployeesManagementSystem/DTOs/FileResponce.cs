@@ -1,7 +1,6 @@
-﻿namespace EmployeesManagementSystem.DTOs
+﻿namespace EmployeesManagementSystem.DTOs;
+
+public class FileResponse
 {
-    public class FileResponce
-    {
-        public string Name { get; set; } = null!;
-    }
+    public string Name { get; set; } = null!;
 }

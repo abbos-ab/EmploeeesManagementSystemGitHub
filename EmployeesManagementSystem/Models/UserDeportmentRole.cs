@@ -1,17 +1,14 @@
-﻿namespace EmployeesManagementSystem.Models
+﻿namespace EmployeesManagementSystem.Models;
+
+public class UserDepartmentRole
 {
-    public class UserDeportmentRole
-    {
-        public Guid Id { get; set; }
-        public Guid IdUser { get; set; }
-        public Guid IdDeportment { get; set; }
-        public Guid IdRole { get; set; }
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public Guid DepartmentId { get; set; }
+    public Guid RoleId { get; set; }
 
-
-
-        public User User { get; set; }
-        public Departament Departament { get; set; }
-        public Role Role { get; set; }
-        ICollection<User> Users { get; set; } = new List<User>();
-    }
+    public User User { get; set; }
+    public Department Department { get; set; }
+    public Role Role { get; set; }
+    public ICollection<User> Users { get; set; } = new List<User>();
 }

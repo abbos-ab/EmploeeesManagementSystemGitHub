@@ -2,25 +2,23 @@
 using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
 
-namespace EmployeesManagementSystem.Profiles
+namespace EmployeesManagementSystem.Profiles;
+
+public class UserProfile : Profile
 {
-    public class UserProfile : Profile
+    public UserProfile()
     {
-        public UserProfile()
-        {
-            CreateMap<UserRequest, User>();
-            CreateMap<CreateUserRequest, User>();
-            CreateMap<User, UserResponce>();
-            CreateMap<UserResponce, User>();
-            CreateMap<OperationList, OperationListResponce>();
-            CreateMap<OperationListResponce, OperationList>();
+        CreateMap<UserRequest, User>();
+        CreateMap<CreateUserRequest, User>();
+        CreateMap<User, UserResponse>();
+        CreateMap<UserResponse, User>();
+        CreateMap<OperationList, OperationListResponse>();
+        CreateMap<OperationListResponse, OperationList>();
 
-            CreateMap<OperationList, DocumentResponce>();
-            CreateMap<DocumentResponce, OperationList>();
+        CreateMap<OperationList, DocumentResponse>();
+        CreateMap<DocumentResponse, OperationList>();
 
-            CreateMap<Document, FileResponce>();
-            CreateMap<FileResponce, Document>();
-        }
+        CreateMap<Document, FileResponse>();
+        CreateMap<FileResponse, Document>();
     }
-
 }

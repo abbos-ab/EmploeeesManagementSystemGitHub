@@ -1,8 +1,7 @@
-﻿namespace EmployeesManagementSystem.DTOs
+﻿namespace EmployeesManagementSystem.DTOs;
+
+public class DepartmentResponse
 {
-    public class DepartamentResponce
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }
