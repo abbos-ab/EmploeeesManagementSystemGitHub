@@ -1,68 +1,63 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 using Org.BouncyCastle.Security;
 
-namespace EmployeesManagementSystem.Services
+namespace EmployeesManagementSystem.Services;
+
+public class AssignmentsService : IAssignmentsService
 {
-    public class AssignmentsService
+    private readonly IAssignmentsRepository _repository;
+    private readonly IMapper _mapper;
+
+    public AssignmentsService(IAssignmentsRepository repository, IMapper mapper)
     {
-        public readonly AssignmentsRepository _repository;
-        public readonly IMapper _mapper;
-        public AssignmentsService(AssignmentsRepository departmentRepository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _repository = departmentRepository;
-        }
+        _mapper = mapper;
+        _repository = repository;
+    }
 
-        public async Task<List<AssignmentsResponce>> GetAll()
-        {
-            var departments = await _repository.GetAll();
-            var responce = _mapper.Map<List<AssignmentsResponce>>(departments);
-            return responce;
-        }
+    public async Task<List<AssignmentsResponse>> GetAll()
+    {
+        var assignments = await _repository.GetAll();
+        var response = _mapper.Map<List<AssignmentsResponse>>(assignments);
+        return response;
+    }
 
-        public async Task<AssignmentsResponce> Create(AssignmentsRequest createDepartment)
-        {
-            var existAssignment = await _repository
-                .GetForCheck(createDepartment.IdUser,
-                createDepartment.IdDeportment,
-                createDepartment.IdRole);
+    public async Task<AssignmentsResponse> Create(AssignmentsRequest request)
+    {
+        var existingAssignment = await _repository
+            .GetForCheck(request.UserId,
+                request.DepartmentId,
+                request.RoleId);
 
-            var IdRole = createDepartment.IdRole.ToString();
+        var roleId = request.RoleId.ToString();
 
-            Guid a = Guid.Parse(IdRole);
-            Guid b = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var requestedRoleId = Guid.Parse(roleId);
+        var superAdminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
-            if (a == b)
-                throw new InvalidParameterException("You cannot assign the 'Employee' role using RoteAdmin");
+        if (requestedRoleId == superAdminRoleId)
+            throw new InvalidParameterException("You cannot assign the 'SuperAdmin' role using this endpoint");
 
-            if (existAssignment is not null)
-                throw new InvalidParameterException("This assignment already exists.");
+        if (existingAssignment is not null)
+            throw new InvalidParameterException("This assignment already exists.");
 
-            var createdDepartment = await _repository.Add(createDepartment);
-            var result = _mapper.Map<AssignmentsResponce>(createdDepartment);
-            return result;
-        }
+        var createdAssignment = await _repository.Add(request);
+        var result = _mapper.Map<AssignmentsResponse>(createdAssignment);
+        return result;
+    }
 
-        public async Task Delete(Guid id)
-        {
-            await _repository.Delete(id);
-        }
+    public async Task Delete(Guid id)
+    {
+        await _repository.Delete(id);
+    }
 
+    public async Task<List<AssignmentsResponse>> GetUserAssignmentsAsync(Guid userId)
+    {
+        var records = await _repository.GetByUserIdAsync(userId);
 
-        public async Task<List<AssignmentsResponce>> GetUserAssignmentsAsync(Guid userId)
-        {
-            var records = await _repository.GetByUserIdAsync(userId);
+        var response = _mapper.Map<List<AssignmentsResponse>>(records);
 
-            var responce = records.Select(r => new AssignmentsResponce
-            {
-                IdUser = r.IdUser,
-                IdDeportment = r.IdDeportment,
-                IdRole = r.IdRole
-            }).ToList();
-
-            return responce;
-        }
+        return response;
     }
 }

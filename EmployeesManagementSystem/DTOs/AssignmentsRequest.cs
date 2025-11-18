@@ -1,9 +1,8 @@
-﻿namespace EmployeesManagementSystem.DTOs
+﻿namespace EmployeesManagementSystem.DTOs;
+
+public class AssignmentsRequest
 {
-    public class AssignmentsRequest
-    {
-        public Guid IdUser { get; set; }
-        public Guid IdDeportment { get; set; }
-        public Guid IdRole { get; set; }
-    }
+    public Guid UserId { get; set; }
+    public Guid DepartmentId { get; set; }
+    public Guid RoleId { get; set; }
 }

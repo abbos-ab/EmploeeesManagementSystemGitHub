@@ -1,19 +1,21 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Repositories;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 
-namespace EmployeesManagementSystem.Services
+namespace EmployeesManagementSystem.Services;
+
+public class RoleService : IRoleService
 {
-    public class RoleService
+    private readonly IRoleRepository _repository;
+
+    public RoleService(IRoleRepository repository)
     {
-        private readonly RoleRepository _repository;
-        public RoleService(RoleRepository repository)
-        {
-            _repository = repository;
-        }
-        public async Task<List<RoleDTO>> GetAll()
-        {
-            var results = await _repository.GetAsignableRoles();
-            return results;
-        }
+        _repository = repository;
+    }
+
+    public async Task<List<RoleResponse>> GetAll()
+    {
+        var results = await _repository.GetAssignableRoles();
+        return results;
     }
 }

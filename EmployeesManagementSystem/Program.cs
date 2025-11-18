@@ -4,47 +4,29 @@ using EmployeesManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        var config = builder.Configuration;
-
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-
-//            ValidIssuer = config["AppSettings:Issuer"],
-//            ValidAudience = config["AppSettings:Audience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(
-//                Encoding.UTF8.GetBytes(config["AppSettings:Token"]!))
-//        };
-//    });
-
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<AssignmentsService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<DocumentService>();
-builder.Services.AddScoped<DepartmentService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<CurrentUserService>();
-builder.Services.AddScoped<PdfWatermarkService>();
+builder.Services.AddScoped<IAssignmentsService, AssignmentsService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IPdfWatermarkService, PdfWatermarkService>();
 
-
-builder.Services.AddScoped<AssignmentsRepository>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<DocumentRepository>();
-builder.Services.AddScoped<DepartmentRepository>();
-builder.Services.AddScoped<RoleRepository>();
-builder.Services.AddScoped<OperationRepository>();
+builder.Services.AddScoped<IAssignmentsRepository, AssignmentsRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IOperationRepository, OperationRepository>();
 
 builder.Services.AddScoped<AppDbContext>();
 
@@ -69,20 +51,19 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowBlazorApp", policy =>
     {
         policy.WithOrigins(
-            "http://localhost:5059",  // Blazor WebAssembly HTTP
-            "https://localhost:5059", // Blazor WebAssembly HTTPS
-            "http://localhost:3000"   // React (eski)
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod();
+                "http://localhost:5059", // Blazor WebAssembly HTTP
+                "https://localhost:5059", // Blazor WebAssembly HTTPS
+                "http://localhost:3000" // React
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
-
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -112,35 +93,12 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
 });
 
-//builder.Services.AddCors(option =>
-//{
-//    option.AddPolicy("AllowReactApp",
-//        policy =>
-//        {
-//            policy.WithOrigins("http://localhost:3000")
-//                  .AllowAnyHeader()
-//                  .AllowAnyMethod();
-//        });
-//});
-
-builder.Services.AddCors(opts => {
-    opts.AddPolicy("AllowBlazor", p => p.WithOrigins("http://localhost:5059", "http://localhost:5000", "http://localhost:3000")
-      .AllowAnyHeader().AllowAnyMethod());
-});
-
-
-
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
-
-
-builder.Services.AddAuthentication();
 
 var app = builder.Build();
 
@@ -153,14 +111,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(builder => builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+app.UseCors("AllowBlazorApp");
 
 app.UseRouting();
-app.UseCors("AllowReactApp");
-app.UseCors("AllowBlazorApp");
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -2,59 +2,60 @@
 using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.DTOs;
 using AutoMapper;
+using EmployeesManagementSystem.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmployeesManagementSystem.Repositories
+namespace EmployeesManagementSystem.Repositories;
+
+public class AssignmentsRepository : IAssignmentsRepository
 {
-    public class AssignmentsRepository
+    private readonly AppDbContext _dbContext;
+    private readonly IMapper _mapper;
+
+    public AssignmentsRepository(AppDbContext dbContext, IMapper mapper)
     {
-        public readonly AppDbContext _DbContext;
-        public readonly IMapper _mapper;
-        public AssignmentsRepository(AppDbContext dbContext, IMapper mapper)
-        {
-            _mapper = mapper;
-            _DbContext = dbContext;
-        }
+        _mapper = mapper;
+        _dbContext = dbContext;
+    }
 
-        public async Task<List<UserDeportmentRole>> GetAll()
-        {
-            var res = await _DbContext.UserDeportmentRoles.ToListAsync();
-            return res;
-        }
+    public async Task<List<UserDepartmentRole>> GetAll()
+    {
+        var result = await _dbContext.UserDepartmentRoles.ToListAsync();
+        return result;
+    }
 
-        public async Task<UserDeportmentRole?> GetForCheck(Guid userId, Guid departmentId, Guid roleId)
-        {
-            var res = await _DbContext.UserDeportmentRoles
-                .FirstOrDefaultAsync(udr => udr.IdUser == userId
-                    && udr.IdDeportment == departmentId
-                    && udr.IdRole == roleId);
-            return res;
-        }
+    public async Task<UserDepartmentRole> GetForCheck(Guid userId, Guid departmentId, Guid roleId)
+    {
+        var result = await _dbContext.UserDepartmentRoles
+            .FirstOrDefaultAsync(udr => udr.UserId == userId
+                                        && udr.DepartmentId == departmentId
+                                        && udr.RoleId == roleId);
+        return result;
+    }
 
-        public async Task<AssignmentsResponce> Add(AssignmentsRequest createDepartment)
-        {
-            var entity = _mapper.Map<UserDeportmentRole>(createDepartment);
-            _DbContext.UserDeportmentRoles.Add(entity);
-            await _DbContext.SaveChangesAsync();
-            var responce = _mapper.Map<AssignmentsResponce>(entity);
-            return responce;
-        }
+    public async Task<AssignmentsResponse> Add(AssignmentsRequest request)
+    {
+        var entity = _mapper.Map<UserDepartmentRole>(request);
+        _dbContext.UserDepartmentRoles.Add(entity);
+        await _dbContext.SaveChangesAsync();
+        var response = _mapper.Map<AssignmentsResponse>(entity);
+        return response;
+    }
 
-        public async Task Delete(Guid id)
-        {
-            await _DbContext.UserDeportmentRoles
-                .Where(c => c.Id == id)
-                .ExecuteDeleteAsync();
-        }
-        public async Task<List<UserDeportmentRole?>> GetByUserIdAsync(Guid userId)
-        {
-            return await _DbContext.UserDeportmentRoles
-               .Include(udr => udr.Departament)
-               .Include(udr => udr.Role)
-               .Include(udr => udr.User)
-               .Where(udr => udr.IdUser == userId)
-               .ToListAsync();
+    public async Task Delete(Guid id)
+    {
+        await _dbContext.UserDepartmentRoles
+            .Where(c => c.Id == id)
+            .ExecuteDeleteAsync();
+    }
 
-        }
+    public async Task<List<UserDepartmentRole>> GetByUserIdAsync(Guid userId)
+    {
+        return await _dbContext.UserDepartmentRoles
+            .Include(udr => udr.Department)
+            .Include(udr => udr.Role)
+            .Include(udr => udr.User)
+            .Where(udr => udr.UserId == userId)
+            .ToListAsync();
     }
 }

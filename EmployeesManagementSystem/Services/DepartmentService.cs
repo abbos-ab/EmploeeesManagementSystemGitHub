@@ -1,62 +1,61 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Models;
-using EmployeesManagementSystem.Repositories;
-namespace EmployeesManagementSystem.Services
+using EmployeesManagementSystem.Repositories.Interfaces;
+using EmployeesManagementSystem.Services.Interfaces;
+
+namespace EmployeesManagementSystem.Services;
+
+public class DepartmentService : IDepartmentService
 {
-    public class DepartmentService
+    private readonly IDepartmentRepository _repository;
+    private readonly IMapper _mapper;
+
+    public DepartmentService(IDepartmentRepository repository, IMapper mapper)
     {
-        public readonly DepartmentRepository _repository;
-        public readonly IMapper _mapper;
-        public DepartmentService(DepartmentRepository repository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _repository = repository;
-        }
-        
-        public async Task<List<DepartamentResponce>> GetAll()
-        {
-            var departments = await _repository.GetAll();
-            var responce = _mapper.Map<List<DepartamentResponce>>(departments);
-            return responce;
-        }
+        _mapper = mapper;
+        _repository = repository;
+    }
+
+    public async Task<List<DepartmentResponse>> GetAll()
+    {
+        var departments = await _repository.GetAll();
+        var response = _mapper.Map<List<DepartmentResponse>>(departments);
+        return response;
+    }
 
 
-        public async Task<DepartamentResponce> GetById(Guid id)
-        {
-            var department = await _repository.GetById(id);
-            var result = _mapper.Map<DepartamentResponce>(department);
-            return result;
-        }
+    public async Task<DepartmentResponse> GetById(Guid id)
+    {
+        var department = await _repository.GetById(id);
+        var result = _mapper.Map<DepartmentResponse>(department);
+        return result;
+    }
 
-        public async Task<DepartamentResponce> Create(string name)
+    public async Task<DepartmentResponse> Create(string name)
+    {
+        var newDepartment = new Department
         {
-            var newDepartment = new Departament
-            {
-                Id = Guid.NewGuid(),
-                Name = name
-            };
-            var createdDepartment = await _repository.Add(newDepartment);
-            var result = _mapper.Map<DepartamentResponce>(createdDepartment);
-            return result;
-        }
+            Id = Guid.NewGuid(),
+            Name = name
+        };
+        var createdDepartment = await _repository.Add(newDepartment);
+        var result = _mapper.Map<DepartmentResponse>(createdDepartment);
+        return result;
+    }
 
-        public async Task<DepartamentResponce> Update(Guid id, string name)
-        {
-            var department = await _repository.GetById(id);
-            if (department == null)
-                return null;
-            department.Name = name;
-            var updatedDepartment = await _repository.Update(department);
-            var result = _mapper.Map<DepartamentResponce>(updatedDepartment);
-            return result;
-        }
+    public async Task<DepartmentResponse> Update(Guid id, string name)
+    {
+        var department = await _repository.GetById(id);
+        department.Name = name;
+        var updatedDepartment = await _repository.Update(department);
+        var result = _mapper.Map<DepartmentResponse>(updatedDepartment);
+        return result;
+    }
 
-        public async Task Delete(Guid id)
-        {
-            var department = await _repository.GetById(id);
-            await _repository.Delete(department);
-        }
-
+    public async Task Delete(Guid id)
+    {
+        var department = await _repository.GetById(id);
+        await _repository.Delete(department);
     }
 }

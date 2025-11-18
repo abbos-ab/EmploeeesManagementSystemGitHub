@@ -1,80 +1,87 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using EmployeesManagementSystem.Repositories;
-namespace EmployeesManagementSystem.Controllers
+
+namespace EmployeesManagementSystem.Controllers;
+
+// All authenticated users can access documents
+public class DocumentController : BaseController
 {
-    public class DocumentController : BaseController
+    private readonly IDocumentService _documentService;
+
+    public DocumentController(IDocumentService documentService)
     {
-        public readonly DocumentService _documentService;
-        public readonly CurrentUserService _currentUserService;
-        public readonly PdfWatermarkService _watermarkService;
-        public readonly DocumentRepository _documentRepository;
-        public readonly IMapper _mapper;
-        public DocumentController(DocumentService documentService, CurrentUserService currentUserService, PdfWatermarkService watermarkService,DocumentRepository documentRepository,IMapper mapper)
+        _documentService = documentService;
+    }
+
+    [HttpGet]
+    public Task<List<DocumentResponse>> GetAll()
+    {
+        return _documentService.GetAll();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<FileResponse>>> GetBySenderId()
+    {
+        var result = await _documentService.GetBySenderId();
+        return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<FileResponse>>> GetByReceiverId()
+    {
+        var result = await _documentService.GetByReceiverId();
+        return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpLoad([FromForm] DocumentRequest request)
+    {
+        var success = await _documentService.UpLoad(request);
+        if (!success)
+            return NotFound("File not found");
+
+        return Ok("File successfully uploaded");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Send(Guid id, Guid receiverUserId)
+    {
+        var success = await _documentService.Send(id, receiverUserId);
+        if (!success)
+            return NotFound("User or document not found");
+        return Ok("File successfully sent");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Download(Guid id)
+    {
+        var doc = await _documentService.Download(id);
+        if (doc == null)
+            return NotFound("File not found");
+        var contentType = _documentService.GetContentType(doc.Name);
+        return File(doc.Data, contentType, doc.Name);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadStampedPdf(Guid id)
+    {
+        try
         {
-            _documentService = documentService;
-            _currentUserService = currentUserService;
-            _watermarkService = watermarkService;
-            _documentRepository = documentRepository;
-            _mapper = mapper;
+            await _documentService.StampFile(id);
+            return Ok("File successfully stamped and sent");
         }
-
-        [HttpGet]
-        public Task<List<DocumentResponce>> GetAll()
+        catch (KeyNotFoundException ex)
         {
-            return _documentService.GetAll();
+            return NotFound(ex.Message);
         }
-
-        [HttpGet]
-        public async Task<ActionResult<List<FileResponce>>> GetBySenderId()
+        catch (InvalidOperationException ex)
         {
-            var result = await _documentService.GetBySenderId();
-            return Ok(result);
+            return BadRequest(ex.Message);
         }
-
-        [HttpGet]
-        public async Task<ActionResult<List<FileResponce>>> GetByReceiverId()
+        catch (NotSupportedException ex)
         {
-            var result = await _documentService.GetByReceiverId();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpLoad([FromForm] DocumentRequest request)
-        {
-            var success = await _documentService.UpLoad(request);
-            if (!success)
-                return NotFound("File not fined");
-
-            return Ok("File Successfully sended");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Send(Guid id, Guid receiverUserId)
-        {
-            var success = await _documentService.Send(id, receiverUserId);
-            if (!success)
-                return NotFound("User or document not fined");
-            return Ok("File Successfully sended");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Download(Guid id)
-        {
-            var doc = await _documentService.Download(id);
-            if(doc == null)
-                return NotFound("File not fined");
-            var contentType =_documentService.GetContentType(doc.Name);
-            return File(doc.Data, contentType, doc.Name);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DownloadStampedPdf(Guid id)
-        {
-            await _documentService.StempFile(id);
-            return Ok("File successful stemped and sended");
+            return BadRequest(ex.Message);
         }
     }
 }

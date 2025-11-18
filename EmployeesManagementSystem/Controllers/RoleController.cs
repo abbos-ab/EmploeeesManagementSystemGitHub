@@ -1,21 +1,23 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployeesManagementSystem.Controllers
-{
-    public class RoleController : BaseController
-    {
-        private readonly RoleService _service;
-        public RoleController(RoleService service)
-        {
-            _service = service;
-        }
+namespace EmployeesManagementSystem.Controllers;
 
-        [HttpGet]
-        public Task<List<RoleDTO>> GetAll()
-        {
-            return _service.GetAll();
-        }
+[Authorize(Roles = "SuperAdmin")]
+public class RoleController : BaseController
+{
+    private readonly IRoleService _service;
+
+    public RoleController(IRoleService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet]
+    public Task<List<RoleResponse>> GetAll()
+    {
+        return _service.GetAll();
     }
 }

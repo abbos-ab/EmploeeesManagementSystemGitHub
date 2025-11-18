@@ -1,17 +1,17 @@
 ﻿using System.Security.Claims;
+using EmployeesManagementSystem.Services.Interfaces;
 
-namespace EmployeesManagementSystem.Services
+namespace EmployeesManagementSystem.Services;
+
+public class CurrentUserService(IHttpContextAccessor contextAccessor) : ICurrentUserService
 {
-    public class CurrentUserService(IHttpContextAccessor _contextAccessor)
+    public Guid GetUserIdFromToken()
     {
-        public Guid GetUserIdFromToken()
-        {
-            var userId = _contextAccessor.HttpContext?.User;
-            var userIdClaim = userId?.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                throw new UnauthorizedAccessException("User ID claim not found in the token.");
+        var userId = contextAccessor.HttpContext?.User;
+        var userIdClaim = userId?.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            throw new UnauthorizedAccessException("User ID claim not found in the token.");
 
-            return Guid.Parse(userIdClaim.Value);
-        }
+        return Guid.Parse(userIdClaim.Value);
     }
 }

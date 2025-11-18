@@ -1,39 +1,38 @@
 ﻿using EmployeesManagementSystem.DTOs;
-using EmployeesManagementSystem.Services;
+using EmployeesManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployeesManagementSystem.Controllers
+namespace EmployeesManagementSystem.Controllers;
+
+[Authorize(Roles = "SuperAdmin,Admin")]
+public class AssignmentsController : BaseController
 {
-    public class AssignmentsController : BaseController
+    private readonly IAssignmentsService _service;
+
+    public AssignmentsController(IAssignmentsService service)
     {
-        public readonly AssignmentsService _service;
-        public readonly CurrentUserService _currentUserService;
+        _service = service;
+    }
 
-        public AssignmentsController(AssignmentsService departmentService, CurrentUserService currentUserService)
-        {
-            _service = departmentService;
-            _currentUserService = currentUserService;
-        }
+    [HttpGet]
+    public async Task<List<AssignmentsResponse>> GetAll()
+    {
+        var result = await _service.GetAll();
+        return result;
+    }
 
-        [HttpGet]
-        public async Task<List<AssignmentsResponce>> GetAll()
-        {
-            var res = await _service.GetAll();
-            return res;
-        }
+    [HttpPost]
+    public async Task<IActionResult> Assign([FromForm] AssignmentsRequest request)
+    {
+        var createdAssignment = await _service.Create(request);
+        return Ok(createdAssignment);
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Assign([FromForm]AssignmentsRequest createDepartment)
-        {
-            var createdDepartment = await _service.Create(createDepartment);
-            return Ok(createdDepartment);
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> UnAssign(Guid id)
-        {
-            await _service.Delete(id);
-            return Ok();
-        }
+    [HttpDelete]
+    public async Task<IActionResult> UnAssign(Guid id)
+    {
+        await _service.Delete(id);
+        return Ok();
     }
 }

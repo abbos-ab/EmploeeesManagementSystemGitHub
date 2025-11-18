@@ -1,29 +1,29 @@
 ﻿using AutoMapper;
 using EmployeesManagementSystem.Contexts;
 using EmployeesManagementSystem.DTOs;
+using EmployeesManagementSystem.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmployeesManagementSystem.Repositories
+namespace EmployeesManagementSystem.Repositories;
+
+public class RoleRepository : IRoleRepository
 {
-    public class RoleRepository
+    private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
+
+    public RoleRepository(AppDbContext context, IMapper mapper)
     {
-        private readonly AppDbContext _context;
-        private IMapper _mapper;
-        public RoleRepository(AppDbContext context, IMapper mapper)
-        {
-            _mapper = mapper;
-            _context = context;
-        }
+        _mapper = mapper;
+        _context = context;
+    }
 
-        public async Task<List<RoleDTO>> GetAsignableRoles()
-        {
-            var roles = await _context.Roles
-                .Where(r => r.Name != "SuperAdmin")
-                .ToListAsync();
+    public async Task<List<RoleResponse>> GetAssignableRoles()
+    {
+        var roles = await _context.Roles
+            .Where(r => r.Name != "SuperAdmin")
+            .ToListAsync();
 
-            var result = _mapper.Map<List<RoleDTO>>(roles);
-            return result;
-
-        }
+        var result = _mapper.Map<List<RoleResponse>>(roles);
+        return result;
     }
 }
