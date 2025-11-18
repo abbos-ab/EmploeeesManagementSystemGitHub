@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
+// All authenticated users can access documents
 public class DocumentController : BaseController
 {
     private readonly IDocumentService _documentService;

@@ -1,9 +1,11 @@
 ﻿using EmployeesManagementSystem.DTOs;
 using EmployeesManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
+[Authorize(Roles = "SuperAdmin,Admin")]
 public class UserController : BaseController
 {
     private readonly IUserService _service;
@@ -40,6 +42,7 @@ public class UserController : BaseController
     }
 
     [HttpDelete]
+    [Authorize(Roles = "SuperAdmin")] // Only SuperAdmin can delete users
     public Task Delete(Guid id)
     {
         return _service.Delete(id);

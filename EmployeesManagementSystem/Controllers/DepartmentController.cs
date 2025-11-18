@@ -1,8 +1,10 @@
 ﻿using EmployeesManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagementSystem.Controllers;
 
+[Authorize(Roles = "SuperAdmin,Admin")]
 public class DepartmentController : BaseController
 {
     private readonly IDepartmentService _service;
@@ -41,6 +43,7 @@ public class DepartmentController : BaseController
     }
 
     [HttpDelete]
+    [Authorize(Roles = "SuperAdmin")] // Only SuperAdmin can delete departments
     public async Task<IActionResult> Delete([FromQuery] Guid id)
     {
         await _service.Delete(id);

@@ -16,6 +16,8 @@ public class LoginService(AppDbContext context, IConfiguration configuration) : 
     public async Task<string> LoginAsync(UserLogin request)
     {
         var user = await context.Users
+            .Include(u => u.UserDepartmentRoles)
+                .ThenInclude(udr => udr.Role)
             .FirstOrDefaultAsync(u => u.Email == request.Email);
 
         if (user is null)
@@ -37,8 +39,15 @@ public class LoginService(AppDbContext context, IConfiguration configuration) : 
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.Name),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email)
         };
+
+        // Add all user roles to claims
+        foreach (var userDepartmentRole in user.UserDepartmentRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userDepartmentRole.Role.Name));
+        }
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
