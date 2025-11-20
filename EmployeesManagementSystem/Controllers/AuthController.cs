@@ -13,7 +13,7 @@ public class AuthController(ILoginService service) : BaseController
     {
         var token = await service.LoginAsync(request);
         if (token is null)
-            return BadRequest("User not found");
+            return Unauthorized("Invalid email or password");
         return Ok(token);
     }
 }
