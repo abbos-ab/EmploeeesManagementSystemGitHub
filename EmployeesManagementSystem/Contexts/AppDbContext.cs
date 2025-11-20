@@ -5,6 +5,8 @@ namespace EmployeesManagementSystem.Contexts;
 
 public class AppDbContext : DbContext
 {
+    private readonly IConfiguration _configuration;
+
     public DbSet<Department> Departments { get; set; }
     public DbSet<Document> Documents { get; set; }
     public DbSet<OperationList> Operations { get; set; }
@@ -12,9 +14,14 @@ public class AppDbContext : DbContext
     public DbSet<UserDepartmentRole> UserDepartmentRoles { get; set; }
     public DbSet<User> Users { get; set; }
 
+    public AppDbContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = "server=localhost;database=userms;user=root;password=;";
+        var connectionString = _configuration.GetConnectionString("DefaultConnection");
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 
